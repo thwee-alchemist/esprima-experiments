@@ -2,8 +2,9 @@
   "name": "esprima-experiments",
   "version": "0.0.1",
   "description": "Experimenting with Esprima and FourD.js",
-  "main": "index.ipynb",
+  "main": "index.js",
   "scripts": {
+		"start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -15,6 +16,7 @@
   "author": "Joshua Marshall Moore",
   "license": "MIT",
   "devDependencies": {
-    "esprima": "^4.0.1"
+    "esprima": "^4.0.1",
+    "fourdsocketproxy": "^3.0.1"
   }
 }
