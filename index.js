@@ -1,44 +1,53 @@
+
 var esprima = require('esprima');
 var fs = require('fs');
 
+var SIZE = 1000;
+
 var program = fs.readFileSync('./index.js').toString();
 
-var visualize_byproduct = function(fourd, node){
-  fourd.add_vertex({cube: {size: 10, color: 0xffffff}})
-};
-
-function iterate(obj, stack, visualize) {
-  var current = null;
-  for (var property in obj) {
-    var previous;
-    if (obj.hasOwnProperty(property)) {
-      if(current === null){
-        current = fourd.add_vertex({cube: {size: 10, color: 0x000000}}); // color and size are equally important, so they're in a dictionary. 
-      }
-      switch(typeof obj[property]){
-        case 'object':
-          iterate(obj[property], stack + '.' + property);
-          break;
-        case 'array':
-          iterate(obj[property], stack + '[' + property + ']');
-          break;
-          
-        case 'string':
-        case 'number':
-          fourd.add_vertex({label: {text: obj[property].toString()}});
-          break;
+require('fourdsocketproxy')({port: 16100}).then(fourd => {
+  
+  fourd.vertex = fourd.add_vertex;
+  fourd.edge = fourd.add_edge;
+  
+  var previous, current = fourd.vertex({label: {text: 'root: /'}});
+  function traverse(obj) {
+    previous = current;
+    current = fourd.vertex({cube: {size: SIZE, color: 0x000000}});
+    fourd.edge(previous, current);
+    
+    if(typeof jonObj == "object") {
+      for(var key in obj){
+        var value = jsobObj[key];
+        // key is either an array index or object key
+        
+        previous = current !== null ? current : foud.vertex({label: {text: '/'}});
+        current = fourd.vertex({cube: {size: SIZE, color: 0x000000}});
+        fourd.edge(previous, current);
+        
+        fourd.add_edge(current, traverse(value));
       }
     }
+    else if(typeof jsonObj == 'string'){
+      for(var i=0; i<jsonObj.length; i++){
+        previous = current;
+        current = fourd.vertex({label: {text: value}});
+        fourd.edge(previous, current);
+        
+        traverse(jsonObj[i]);
+      }
+    } else {
+      // jsonObj is a number or strin
+      previous = current; // the first object is the syntax object.
+      current = fourd.vertex({label: {text: value}});
+      fourd.edge(previous, current);
+    };
+    
+    return current;
   }
-}
-
-          
-          
-require('fourdsocketproxy')().then(fourd => {
+  
   fourd.clear();
-
-  var stack = [];
-  var syntax = esprima.parse(program, [], visualize_byproduct.bind(null, fourd));
-
-  console.dir(syntax);
+  
+  var syntax = esprima.parse(program, {}, traverse);
 });
